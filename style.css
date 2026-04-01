@@ -1,0 +1,317 @@
+/* Reset e base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    font-size: 12px;
+    line-height: 14px;
+    background-color: #ffffff;
+    color: #b2b2b2;
+}
+
+a {
+    color: #b2b2b2;
+    text-decoration: none;
+}
+
+#projects-list li.active,
+#projects-list li:hover,
+#projects-list li:focus {
+    color: #000000;
+}
+
+#project-title,
+#project-description,
+.project-item-title,
+.project-item-meta,
+.project-title {
+    color: #b2b2b2;
+}
+
+#projects-list li.active .project-item-title,
+#projects-list li.active .project-item-meta,
+#projects-list li.active,
+#projects-list li:hover .project-item-title,
+#projects-list li:hover .project-item-meta,
+#projects-list li:hover,
+#projects-list li:focus .project-item-title,
+#projects-list li:focus .project-item-meta,
+#projects-list li:focus {
+    color: #000000 !important;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Layout a tre colonne */
+.container {
+    display: grid;
+    grid-template-columns: 240px 1fr 600px; /* Colonna destra allargata a 600px, centrale rimpicciolita di conseguenza */
+    height: 100vh;
+    overflow: hidden; /* Previene scroll globale */
+}
+
+.column {
+    padding: 20px;
+    overflow-y: auto; /* Scroll verticale indipendente */
+    border-right: none;
+}
+
+.column:last-child {
+    border-right: none;
+}
+
+/* Colonna progetti */
+#projects-column {
+    display: flex;
+    flex-direction: column;
+    gap: 3px; /* Spazio uniforme tra header e lista */
+}
+
+.project-header {
+    padding-bottom: 10px;
+    border-bottom: 1px solid #000000; /* Filetto nero */
+    margin-bottom: 0; /* Rimosso per usare gap */
+}
+
+.project-title {
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: lowercase;
+    margin-bottom: 14px;
+}
+
+#projects-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 3px; /* Spazio uniforme tra elementi lista */
+}
+
+#projects-list li {
+    margin-bottom: 0; /* Rimosso per usare gap */
+    cursor: pointer;
+    padding: 5px 0; /* Spazio ridotto tra testo e linea */
+    border-bottom: 1px solid #b2b2b2;
+    transition: opacity 0.2s;
+}
+
+#projects-list li.active,
+#projects-list li:hover,
+#projects-list li:focus {
+    border-bottom-color: #000000;
+}
+
+#projects-list li:hover {
+    opacity: 0.7;
+}
+
+#projects-list li.active {
+    border-color: rgba(0, 0, 0, 0.2);
+    opacity: 1;
+}
+
+.project-item-title {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.project-item-meta {
+    font-size: 12px;
+    opacity: 0.8;
+    margin-top: 4px;
+}
+
+/* Colonna immagini */
+#images-column {
+    padding: 0px;
+    overflow-y: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+}
+
+#images-column::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+}
+
+#images-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+}
+
+#images-container img,
+#images-container video {
+    width: 100%;
+    height: auto;
+}
+
+/* Colonna descrizione */
+#description-column {
+    padding: 10px 0 10px 10px; /* Margine destro eliminato per righe più lunghe */
+}
+
+#description-content {
+    max-width: 500px;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#description-column h2 {
+    margin-bottom: 14px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+#project-description {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+#project-description-main,
+#project-description-last {
+    font-size: 12px;
+    line-height: 14px;
+    opacity: 0.9;
+    white-space: pre-line; /* Mantiene gli a capo dal JSON */
+}
+
+#project-description-last {
+    margin-top: auto;
+    padding-top: 14px;
+    font-size: 12px;
+    line-height: 14px;
+}
+
+/* Legacy selector kept for compatibility */
+#project-description {
+    font-size: 12px;
+    line-height: 14px;
+    opacity: 0.9;
+    white-space: pre-line;
+}
+
+/* Spazio bianco e minimalismo */
+.column {
+    background-color: transparent;
+}
+
+.column:nth-child(2) {
+    background-color: transparent;
+    padding: 20px;
+}
+
+/* Video styles */
+video {
+    cursor: none;
+}
+
+#mobile-project-overlay {
+    display: none;
+}
+
+body.mobile-overlay-open {
+    overflow: hidden;
+}
+
+@media (max-width: 900px) {
+    .container {
+        display: block;
+        height: 100dvh;
+    }
+
+    #projects-column,
+    #description-column {
+        display: none;
+    }
+
+    #images-column {
+        display: block;
+        width: 100%;
+        height: 100dvh;
+        padding: 0;
+        overflow-y: auto;
+    }
+
+    .column:nth-child(2) {
+        padding: 0;
+    }
+
+    #images-container img,
+    #images-container video {
+        display: block;
+        width: 100%;
+    }
+
+    #mobile-project-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        display: none;
+        background: #ffffff;
+        color: #000000;
+        overflow-y: auto;
+        padding: 20px;
+    }
+
+    #mobile-project-overlay.is-open {
+        display: block;
+    }
+
+    #mobile-overlay-close {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        border: 0;
+        background: transparent;
+        color: #000000;
+        font: inherit;
+        font-size: 20px;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #mobile-overlay-content {
+        padding-top: 28px;
+        max-width: 100%;
+    }
+
+    #mobile-project-title,
+    #mobile-project-description {
+        color: #000000;
+    }
+
+    #mobile-project-title {
+        margin-bottom: 14px;
+        font-size: 12px;
+        line-height: 14px;
+    }
+
+    #mobile-project-description {
+        min-height: calc(100dvh - 90px);
+        display: flex;
+        flex-direction: column;
+    }
+
+    #mobile-project-description-main,
+    #mobile-project-description-last {
+        white-space: pre-line;
+        font-size: 24px;
+        line-height: 28px;
+    }
+
+    #mobile-project-description-last {
+        margin-top: auto;
+        padding-top: 14px;
+        font-size: 12px;
+        line-height: 14px;
+    }
+}
