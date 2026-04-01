@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>martina valente</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="column" id="projects-column">
+            <div class="project-header">
+                <div class="project-title">martina valente</div>
+            </div>
+            <ul id="projects-list"></ul>
+        </div>
+        <div class="column" id="images-column">
+            <div id="images-container"></div>
+        </div>
+        <div class="column" id="description-column">
+            <div id="description-content">
+                <h2 id="project-title"></h2>
+                <div id="project-description">
+                    <p id="project-description-main"></p>
+                    <p id="project-description-last"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="mobile-project-overlay" aria-hidden="true">
+        <button id="mobile-overlay-close" type="button" aria-label="Chiudi descrizione">x</button>
+        <div id="mobile-overlay-content">
+            <h2 id="mobile-project-title"></h2>
+            <div id="mobile-project-description">
+                <p id="mobile-project-description-main"></p>
+                <p id="mobile-project-description-last"></p>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
