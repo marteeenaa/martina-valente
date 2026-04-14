@@ -226,7 +226,7 @@ function populateImages(projects) {
     const allMedia = [];
 
     projects.forEach((project, projectIndex) => {
-        (project.images_2 || []).forEach((imageSrc, imageIndex) => {
+        (project.images || []).forEach((imageSrc, imageIndex) => {
             if (!hasAllowedExtension(imageSrc)) {
                 return;
             }
