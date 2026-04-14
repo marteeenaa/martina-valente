@@ -3,11 +3,11 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    font-weight: 700;
 }
 
 body {
-    font-family: Arial, sans-serif;
-    font-weight: bold;
     font-size: 12px;
     line-height: 14px;
     background-color: #ffffff;
@@ -82,7 +82,7 @@ a:hover {
 
 .project-title {
     font-size: 12px;
-    font-weight: bold;
+    font-weight: 700;
     text-transform: lowercase;
     margin-bottom: 14px;
 }
@@ -92,6 +92,12 @@ a:hover {
     display: flex;
     flex-direction: column;
     gap: 3px; /* Spazio uniforme tra elementi lista */
+    transition: opacity 0.4s ease;
+}
+
+body.landing-active #projects-list {
+    opacity: 0;
+    pointer-events: none;
 }
 
 #projects-list li {
@@ -119,7 +125,7 @@ a:hover {
 
 .project-item-title {
     font-size: 12px;
-    font-weight: bold;
+    font-weight: 700;
 }
 
 .project-item-meta {
@@ -157,6 +163,27 @@ a:hover {
     padding: 10px 0 10px 10px; /* Margine destro eliminato per righe più lunghe */
 }
 
+#landing-description {
+    display: none;
+    max-width: 500px;
+    color: #0000ff;
+    font-size: 12px;
+    line-height: 14px;
+    white-space: pre-line;
+}
+
+#landing-description p + p {
+    margin-top: 14px;
+}
+
+body.landing-active #landing-description {
+    display: block;
+}
+
+body.landing-active #description-content {
+    display: none;
+}
+
 #description-content {
     max-width: 500px;
     min-height: 100%;
@@ -167,7 +194,7 @@ a:hover {
 #description-column h2 {
     margin-bottom: 14px;
     font-size: 12px;
-    font-weight: bold;
+    font-weight: 700;
 }
 
 #project-description {
@@ -209,6 +236,47 @@ a:hover {
     padding: 20px;
 }
 
+/* Logo section */
+.logo-section {
+    padding-bottom: 0px;
+    border-bottom: none;
+    margin-bottom: 2px;
+    display: flex;
+    align-items: flex-start;
+    min-height: 112px;
+    padding-top: 0px;
+}
+
+.logo-image {
+    max-width: 100%;
+    max-height: 112px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.logo-image:hover {
+    opacity: 0.7;
+}
+
+/* Landing page */
+#landing-page {
+    height: 100vh;
+    width: 100%;
+    flex-shrink: 0;
+    background-color: #ffffff;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 0;
+}
+
+.landing-image {
+    width: 50%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+}
+
 /* Video styles */
 video {
     cursor: none;
@@ -239,6 +307,24 @@ body.mobile-overlay-open {
         height: 100dvh;
         padding: 0;
         overflow-y: auto;
+    }
+
+    #landing-page {
+        width: 100%;
+        height: 100dvh;
+    }
+
+    .landing-logo {
+        max-width: 150px;
+        max-height: 150px;
+    }
+
+    .landing-content h1 {
+        font-size: 20px;
+    }
+
+    .landing-content p {
+        font-size: 12px;
     }
 
     .column:nth-child(2) {

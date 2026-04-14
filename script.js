@@ -11,40 +11,44 @@ async function loadProjects() {
 }
 
 const centralMediaOrder = [
-    'radio_1.jpeg',
-    'tesi_2.png',
-    'font_1.png',
-    'gurz_4.jpg',
-    'dimitri_1.png',
-    'dimitri_3.jpeg',
-    'tesi_3.png',
+    'radio_1.webp',
+    'tesi_2.webp',
+    'font_1.webp',
+    'gurz_4.webp',
+    'dimitri_1.webp',
+    'dimitri_3.webp',
+    'tesi_3.webp',
     'AI_1.mp4',
-    'casetta_0.jpeg',
-    'dimitri_2.png',
-    'AGF_1.jpg',
-    'gurz_2.jpg',
-    'tesi_2.jpeg',
-    'tesi_1.jpeg',
-    'radio_7.png',
-    'AGF_3.jpg',
+    'casetta_0.webp',
+    'dimitri_2.webp',
+    'AGF_1.webp',
+    'gurz_2.webp',
+    'tesi_2b.webp',
+    'tesi_1 copy.webp',
+    'radio_7.webp',
+    'AGF_3.webp',
     'gurz_7.mp4',
-    'radio_6.jpg',
-    'casetta_1.jpg',
-    'casetta_2.jpg',
-    'radio_book_1.png',
-    'radio_3.jpg',
-    'casetta_3.jpg',
-    'font_3.jpg',
-    'radio_5.png',
-    'tesi_4.png',
-    'polano_2.jpg',
-    'radio_book_2.png',
-    'gurz_5.jpeg',
-    'tesi_1.png',
-    'tesi_1b.png',
-    'font_2.jpg',
-    'AGF_2.png'
+    'radio_6.webp',
+    'casetta_1.webp',
+    'casetta_2.webp',
+    'radio_book_1.webp',
+    'radio_3.webp',
+    'casetta_3.webp',
+    'font_3.webp',
+    'radio_5.webp',
+    'tesi_4.webp',
+    'polano_2.webp',
+    'radio_book_2.webp',
+    'gurz_5.webp',
+    'tesi_1.webp',
+    'tesi_1b.webp',
+    'font_2.webp',
+    'AGF_2.webp'
 ];
+
+function hasAllowedExtension(path) {
+    return /\.(webp|mp4)$/i.test(path || '');
+}
 
 function getMediaFileName(path) {
     return (path || '').split('/').pop();
@@ -167,6 +171,29 @@ function bindMobileOverlayEvents() {
     });
 }
 
+// Funzioni per la landing page
+function showLandingPage() {
+    const imagesColumn = document.getElementById('images-column');
+    document.body.classList.add('landing-active');
+    if (imagesColumn) {
+        imagesColumn.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    document.querySelectorAll('#projects-list li').forEach(li => li.classList.remove('active'));
+    activeProjectIndex = null;
+    lastSelectedProjectIndex = null;
+}
+
+function hideLandingPage() {
+    document.body.classList.remove('landing-active');
+}
+
+function bindLogoEvents() {
+    const logoLink = document.getElementById('logo-link');
+    if (logoLink) {
+        logoLink.addEventListener('click', showLandingPage);
+    }
+}
+
 // Popola la lista dei progetti
 function populateProjectsList(projects) {
     const projectsList = document.getElementById('projects-list');
@@ -200,6 +227,10 @@ function populateImages(projects) {
 
     projects.forEach((project, projectIndex) => {
         (project.images || []).forEach((imageSrc, imageIndex) => {
+            if (!hasAllowedExtension(imageSrc)) {
+                return;
+            }
+
             allMedia.push({
                 src: imageSrc,
                 projectIndex,
@@ -211,6 +242,10 @@ function populateImages(projects) {
 
     const linkedFileNames = new Set(allMedia.map(media => getMediaFileName(media.src)));
     centralMediaOrder.forEach((fileName, orderIndex) => {
+        if (!hasAllowedExtension(fileName)) {
+            return;
+        }
+
         if (!linkedFileNames.has(fileName)) {
             allMedia.push({
                 src: `images/${fileName}`,
@@ -328,6 +363,22 @@ function syncProjectWithScroll(projects) {
             return;
         }
 
+        // Gestione landing: se siamo nel primo 50% dell'altezza della landing, ripristina landing-active
+        const landingPage = document.getElementById('landing-page');
+        const landingHeight = landingPage ? landingPage.offsetHeight : 0;
+        if (imagesColumn.scrollTop < landingHeight * 0.5) {
+            if (!document.body.classList.contains('landing-active')) {
+                document.body.classList.add('landing-active');
+                document.querySelectorAll('#projects-list li').forEach(li => li.classList.remove('active'));
+                activeProjectIndex = null;
+                lastSelectedProjectIndex = null;
+            }
+            ticking = false;
+            return;
+        } else {
+            document.body.classList.remove('landing-active');
+        }
+
         const columnTop = imagesColumn.getBoundingClientRect().top;
         const currentElement = mediaElements.find(element => element.getBoundingClientRect().bottom > columnTop);
 
@@ -382,6 +433,7 @@ function selectProject(index, projects, clickedElement = null) {
         }
     }
 
+    hideLandingPage();
     updateActiveProject(index, projects);
 
     if (isFromLeftColumnClick) {
@@ -397,10 +449,11 @@ async function init() {
     const projects = await loadProjects();
     if (projects.length > 0) {
         bindMobileOverlayEvents();
+        bindLogoEvents();
         populateProjectsList(projects);
         populateImages(projects);
-        // Seleziona il primo progetto per default
-        selectProject(0, projects);
+        // Mostra la landing page per default
+        showLandingPage();
         syncProjectWithScroll(projects);
 
         // Configura l'osservatore per i video
