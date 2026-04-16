@@ -46,6 +46,47 @@ const centralMediaOrder = [
     'AGF_2.webp'
 ];
 
+const landingRandomMedia = [
+    'images/LANDING/IMG_3428.webp',
+    'images/LANDING/anatre.webp',
+    'images/LANDING/arcobaleno.webp',
+    'images/LANDING/arcobaleno_2.webp',
+    'images/LANDING/biennale.webp',
+    'images/LANDING/biennale_1.webp',
+    'images/LANDING/biennale_2.webp',
+    'images/LANDING/crusc8.webp',
+    'images/LANDING/fiore.webp',
+    'images/LANDING/giostre.webp',
+    'images/LANDING/libro-telo.webp',
+    'images/LANDING/mercatino_1.webp',
+    'images/LANDING/mercatino_2.webp',
+    'images/LANDING/mercatino_3.webp',
+    'images/LANDING/mercatino_4.webp',
+    'images/LANDING/neve.webp',
+    'images/LANDING/palloncini.webp',
+    'images/LANDING/peluche.webp',
+    'images/LANDING/prato.webp',
+    'images/LANDING/pratofiori.webp',
+    'images/LANDING/ringhiera.webp',
+    'images/LANDING/sedile.webp',
+    'images/LANDING/simbolo.webp',
+    'images/LANDING/soffitto.webp',
+    'images/LANDING/sole.webp',
+    'images/LANDING/stagno.webp',
+    'images/LANDING/strada.webp',
+    'images/LANDING/tavolo_1.webp',
+    'images/LANDING/tavolo_2.webp',
+    'images/LANDING/tavolo_3.webp',
+    'images/LANDING/telo_1.webp',
+    'images/LANDING/telo_2.webp',
+    'images/LANDING/telo_3.webp',
+    'images/LANDING/telo_4.webp',
+    'images/LANDING/vetrina.webp',
+    'images/LANDING/vinile_1.webp',
+    'images/LANDING/vinile_2.webp',
+    'images/LANDING/volante.png'
+];
+
 function hasAllowedExtension(path) {
     return /\.(webp|mp4)$/i.test(path || '');
 }
@@ -61,6 +102,8 @@ let activeProjectIndex = null;
 const projectCyclePositions = new Map();
 let suppressScrollSyncUntil = 0;
 const scrollSyncGuardMs = 180;
+let landingRandomMediaPool = [];
+let landingRandomPlacementPool = [];
 
 function temporarilySuppressScrollSync(durationMs = 700) {
     suppressScrollSyncUntil = Date.now() + durationMs;
@@ -72,6 +115,55 @@ function getProjectMediaElements(projectIndex) {
 
 function isMobileView() {
     return mobileViewport.matches;
+}
+
+function getRandomItem(items) {
+    if (!Array.isArray(items) || items.length === 0) {
+        return null;
+    }
+
+    return items[Math.floor(Math.random() * items.length)];
+}
+
+function shuffleItems(items) {
+    const shuffled = [...items];
+
+    for (let index = shuffled.length - 1; index > 0; index -= 1) {
+        const swapIndex = Math.floor(Math.random() * (index + 1));
+        [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+    }
+
+    return shuffled;
+}
+
+function getNextLandingRandomMedia() {
+    if (landingRandomMediaPool.length === 0) {
+        landingRandomMediaPool = shuffleItems(landingRandomMedia);
+    }
+
+    return landingRandomMediaPool.pop() || null;
+}
+
+function getLandingPlacementAnchors() {
+    const anchors = [];
+    const xPositions = [8, 26, 44, 62, 80];
+    const yPositions = [10, 28, 46, 64, 82];
+
+    yPositions.forEach(y => {
+        xPositions.forEach(x => {
+            anchors.push({ x, y });
+        });
+    });
+
+    return anchors;
+}
+
+function getNextLandingPlacement() {
+    if (landingRandomPlacementPool.length === 0) {
+        landingRandomPlacementPool = shuffleItems(getLandingPlacementAnchors());
+    }
+
+    return landingRandomPlacementPool.pop() || { x: 50, y: 50 };
 }
 
 function splitDescriptionText(rawDescription) {
@@ -130,16 +222,32 @@ function setDescriptionContent(prefix, descriptionText, projectTitle = '') {
     lastElement.textContent = last;
 }
 
-function openMobileProjectOverlay(project) {
+function getLandingDescriptionText() {
+    const paragraphs = Array.from(document.querySelectorAll('#landing-description p'))
+        .map(paragraph => paragraph.textContent.trim())
+        .filter(Boolean);
+
+    return paragraphs.join('\n\n');
+}
+
+function openMobileProjectOverlay(content = {}) {
     const overlay = document.getElementById('mobile-project-overlay');
     const title = document.getElementById('mobile-project-title');
 
-    if (!overlay || !title || !project) {
+    if (!overlay || !title) {
         return;
     }
 
-    title.textContent = project.title || '';
-    setDescriptionContent('mobile-project-description', project.description || '', project.title || '');
+    const {
+        title: overlayTitle = '',
+        description = '',
+        colorTheme = 'default'
+    } = content;
+
+    title.textContent = overlayTitle;
+    title.hidden = !overlayTitle;
+    setDescriptionContent('mobile-project-description', description, overlayTitle);
+    overlay.classList.toggle('is-landing-copy', colorTheme === 'landing');
     overlay.classList.add('is-open');
     overlay.setAttribute('aria-hidden', 'false');
     document.body.classList.add('mobile-overlay-open');
@@ -153,15 +261,30 @@ function closeMobileProjectOverlay() {
     }
 
     overlay.classList.remove('is-open');
+    overlay.classList.remove('is-landing-copy');
     overlay.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('mobile-overlay-open');
 }
 
 function bindMobileOverlayEvents() {
     const closeButton = document.getElementById('mobile-overlay-close');
+    const mobileAboutButton = document.getElementById('mobile-about-button');
 
     if (closeButton) {
         closeButton.addEventListener('click', closeMobileProjectOverlay);
+    }
+
+    if (mobileAboutButton) {
+        mobileAboutButton.addEventListener('click', () => {
+            if (!isMobileView()) {
+                return;
+            }
+
+            openMobileProjectOverlay({
+                description: getLandingDescriptionText(),
+                colorTheme: 'landing'
+            });
+        });
     }
 
     mobileViewport.addEventListener('change', event => {
@@ -174,6 +297,7 @@ function bindMobileOverlayEvents() {
 // Funzioni per la landing page
 function showLandingPage() {
     const imagesColumn = document.getElementById('images-column');
+    clearLandingRandomImages();
     document.body.classList.add('landing-active');
     if (imagesColumn) {
         imagesColumn.scrollTo({ top: 0, behavior: 'smooth' });
@@ -189,9 +313,143 @@ function hideLandingPage() {
 
 function bindLogoEvents() {
     const logoLink = document.getElementById('logo-link');
+    const mobileLogoButton = document.getElementById('mobile-logo-button');
+
     if (logoLink) {
         logoLink.addEventListener('click', showLandingPage);
     }
+
+    if (mobileLogoButton) {
+        mobileLogoButton.addEventListener('click', showLandingPage);
+    }
+}
+
+function clearLandingRandomImages() {
+    const container = document.getElementById('landing-random-images');
+
+    if (!container) {
+        return;
+    }
+
+    container.innerHTML = '';
+    landingRandomPlacementPool = [];
+}
+
+function createRandomLandingImage() {
+    const container = document.getElementById('landing-random-images');
+    const landingPage = document.getElementById('landing-page');
+
+    if (!container || !landingPage) {
+        return;
+    }
+
+    const source = getNextLandingRandomMedia();
+
+    if (!source) {
+        return;
+    }
+
+    const mobileSizeMultiplier = 1.7;
+    const desktopFormatOptions = [
+        { width: [28.8, 43.2], ratio: [0.72, 0.9] },
+        { width: [32.4, 50.4], ratio: [1.2, 1.55] },
+        { width: [25.2, 36], ratio: [0.95, 1.05] },
+        { width: [46.8, 64.8], ratio: [1.45, 1.8] }
+    ];
+    const formatOptions = isMobileView()
+        ? desktopFormatOptions.map(option => ({
+            width: [
+                option.width[0] * mobileSizeMultiplier,
+                option.width[1] * mobileSizeMultiplier
+            ],
+            ratio: option.ratio
+        }))
+        : desktopFormatOptions;
+    const chosenFormat = getRandomItem(formatOptions);
+
+    if (!chosenFormat) {
+        return;
+    }
+
+    const image = document.createElement('img');
+    const width = chosenFormat.width[0] + Math.random() * (chosenFormat.width[1] - chosenFormat.width[0]);
+    const ratio = chosenFormat.ratio[0] + Math.random() * (chosenFormat.ratio[1] - chosenFormat.ratio[0]);
+    const height = width / ratio;
+    const minLeft = Math.min(0, 100 - width);
+    const minTop = Math.min(0, 100 - height);
+    const anchor = getNextLandingPlacement();
+    const jitterX = (Math.random() * 12) - 6;
+    const jitterY = (Math.random() * 12) - 6;
+    const unclampedLeft = anchor.x + jitterX - (width / 2);
+    const unclampedTop = anchor.y + jitterY - (height / 2);
+    const left = Math.max(minLeft, Math.min(100, unclampedLeft));
+    const top = Math.max(minTop, Math.min(100, unclampedTop));
+
+    image.src = source;
+    image.alt = '';
+    image.className = 'landing-random-image';
+    image.style.width = `${width}%`;
+    image.style.aspectRatio = `${ratio}`;
+    image.style.left = `${left}%`;
+    image.style.top = `${top}%`;
+    image.style.setProperty('--landing-random-rotation', `${(Math.random() * 20) - 10}deg`);
+
+    container.appendChild(image);
+}
+
+function hasFirstProjectMediaReachedHeader() {
+    const imagesColumn = document.getElementById('images-column');
+    const firstProjectMedia = document.querySelector('#images-container [data-project-index]');
+
+    if (!imagesColumn || !firstProjectMedia) {
+        return false;
+    }
+
+    const columnTop = imagesColumn.getBoundingClientRect().top;
+    const firstMediaTop = firstProjectMedia.getBoundingClientRect().top;
+
+    return firstMediaTop <= columnTop;
+}
+
+function bindLandingRandomImages() {
+    const imagesColumn = document.getElementById('images-column');
+    const mobileLogoButton = document.getElementById('mobile-logo-button');
+    const mobileAboutButton = document.getElementById('mobile-about-button');
+
+    if (!imagesColumn) {
+        return;
+    }
+
+    const handleLandingPointerStart = event => {
+        if (!document.body.classList.contains('landing-active')) {
+            return;
+        }
+
+        if (document.body.classList.contains('mobile-overlay-open')) {
+            return;
+        }
+
+        if (
+            mobileLogoButton?.contains(event.target)
+            || mobileAboutButton?.contains(event.target)
+        ) {
+            return;
+        }
+
+        createRandomLandingImage();
+    };
+
+    document.addEventListener('pointerdown', handleLandingPointerStart, { passive: true });
+
+    imagesColumn.addEventListener('scroll', () => {
+        const landingPage = document.getElementById('landing-page');
+        const landingHeight = landingPage ? landingPage.offsetHeight : 0;
+        const hasLeftLanding = landingHeight > 0 && imagesColumn.scrollTop >= landingHeight * 0.5;
+
+        if (hasLeftLanding || hasFirstProjectMediaReachedHeader()) {
+            clearLandingRandomImages();
+        }
+    });
 }
 
 // Popola la lista dei progetti
@@ -434,6 +692,7 @@ function selectProject(index, projects, clickedElement = null) {
     }
 
     hideLandingPage();
+    clearLandingRandomImages();
     updateActiveProject(index, projects);
 
     if (isFromLeftColumnClick) {
@@ -450,6 +709,7 @@ async function init() {
     if (projects.length > 0) {
         bindMobileOverlayEvents();
         bindLogoEvents();
+        bindLandingRandomImages();
         populateProjectsList(projects);
         populateImages(projects);
         // Mostra la landing page per default

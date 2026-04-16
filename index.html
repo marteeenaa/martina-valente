@@ -10,13 +10,23 @@
     <div class="container">
         <div class="column" id="projects-column">
             <div class="logo-section">
-                <img id="logo-link" src="images/logo_mv.png" alt="martina valente" class="logo-image">
+                <img id="logo-link" src="images_2/logo_mv.png" alt="martina valente" class="logo-image">
             </div>
             <ul id="projects-list"></ul>
         </div>
         <div class="column" id="images-column">
+            <button id="mobile-logo-button" type="button" aria-label="Torna alla landing page">
+                <img src="images_2/logo_mv.png" alt="martina valente" class="mobile-logo-image">
+            </button>
+            <button id="mobile-about-button" type="button" aria-label="Apri about">about</button>
             <div id="landing-page">
-                <img src="images/" alt="" class="landing-image">
+                <div id="mobile-landing-trigger" aria-hidden="true">
+                    <img src="images_2/landing.webp" alt="Landing page preview" class="landing-image" draggable="false">
+                </div>
+                <div class="landing-starburst" aria-hidden="true">
+                    <img src="images/LANDING/stella.png" alt="" class="landing-starburst-image" draggable="false">
+                    <span class="landing-starburst-text">&lt;3<br>click or scroll<br>to discover more<br>&lt;3</span>
+                </div>
             </div>
             <div id="images-container"></div>
         </div>
@@ -45,6 +55,27 @@
             </div>
         </div>
     </div>
+    <div id="mobile-footer-marquee" aria-hidden="true">
+        <div class="mobile-footer-marquee-track">
+            <div class="mobile-footer-marquee-group">
+                <span class="marquee-color-blue">&lt;3 click or scroll to discover more &lt;3</span>
+                <span class="marquee-color-pink">&lt;3 click or scroll to discover more &lt;3</span>
+                <span class="marquee-color-green">&lt;3 click or scroll to discover more &lt;3</span>
+                <span class="marquee-color-blue">&lt;3 click or scroll to discover more &lt;3</span>
+                <span class="marquee-color-pink">&lt;3 click or scroll to discover more &lt;3</span>
+                <span class="marquee-color-green">&lt;3 click or scroll to discover more &lt;3</span>
+            </div>
+            <div class="mobile-footer-marquee-group">
+                <span class="marquee-color-blue">&lt;3 click or scroll to discover more &lt;3</span>
+                <span class="marquee-color-pink">&lt;3 click or scroll to discover more &lt;3</span>
+                <span class="marquee-color-green">&lt;3 click or scroll to discover more &lt;3</span>
+                <span class="marquee-color-blue">&lt;3 click or scroll to discover more &lt;3</span>
+                <span class="marquee-color-pink">&lt;3 click or scroll to discover more &lt;3</span>
+                <span class="marquee-color-green">&lt;3 click or scroll to discover more &lt;3</span>
+            </div>
+        </div>
+    </div>
+    <div id="landing-random-images" aria-hidden="true"></div>
     <script src="script.js"></script>
 </body>
 </html>
